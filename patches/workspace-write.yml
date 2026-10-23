@@ -1,0 +1,23 @@
+# 桥接 overlay：受控写入模式。写入范围 = headless 会话的 cwd（bridge 用 cwd 启动进程）。
+# 同样把所有预设名映射到 workspace-write，防止 settings 里的 danger-full-access 漏进来。
+- id: sandbox-policy
+  config:
+    mode: workspace-write
+
+- id: approval
+  config:
+    policy: never
+
+- id: permission
+  config:
+    defaultPreset: workspace-write
+    presets:
+      read-only:
+        sandbox: workspace-write
+        approval: never
+      workspace-write:
+        sandbox: workspace-write
+        approval: never
+      danger-full-access:
+        sandbox: workspace-write
+        approval: never

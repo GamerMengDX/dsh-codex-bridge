@@ -1,0 +1,26 @@
+# 桥接 overlay：只读分析模式。
+# 注意：settings.yaml 里的 permission.defaultPreset（当前 danger-full-access）会在
+# 建会话时把 sandbox/mode 钉进事件流，单纯设 sandbox-policy.mode 会被它覆盖。
+# 因此这里把三个预设名全部映射到 read-only —— 无论 settings 钉了哪个名字，
+# 实际沙箱都是只读。overlay 只作用于本次进程，不影响 GUI 和其他 profile。
+- id: sandbox-policy
+  config:
+    mode: read-only
+
+- id: approval
+  config:
+    policy: never
+
+- id: permission
+  config:
+    defaultPreset: read-only
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: never
+      workspace-write:
+        sandbox: read-only
+        approval: never
+      danger-full-access:
+        sandbox: read-only
+        approval: never

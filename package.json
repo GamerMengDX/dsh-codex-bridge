@@ -1,0 +1,14 @@
+{
+  "name": "dsh-codex-bridge",
+  "version": "2.2.4",
+  "private": true,
+  "license": "MIT",
+  "author": "残梦",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "description": "Codex ⇄ DSH 双 Agent 协作桥：MCP + CLI，可选持久会话（可移植安装）",
+  "scripts": {
+    "test": "node --test tests/protocol.test.mjs tests/registry.test.mjs tests/session-lane.test.mjs tests/cli-args.test.mjs tests/capture.test.mjs tests/workflow.test.mjs tests/install.test.mjs tests/install-safety.test.mjs tests/apply-config.test.mjs tests/portable.test.mjs tests/toml-sections.test.mjs tests/trace.test.mjs tests/docs-consistency.test.mjs",
+    "test:integration": "DSH_BRIDGE_INTEGRATION=1 node --test tests/integration.test.mjs"
+  }
+}

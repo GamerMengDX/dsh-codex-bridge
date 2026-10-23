@@ -1,0 +1,43 @@
+#!/bin/sh
+# dsh-run — dsh-task 的简写入口（保留旧名字，参数原样转发）。
+#
+#   ./dsh-run "列出 ~/Documents 下最大的三个文件"
+#   ./dsh-run -m edit -C ~/some/project -g "修复 X 并跑测试" -a "测试全绿"
+#
+# 可移植性约定：
+# - 按**自身位置**定位同目录的 dsh-task.mjs，因此整个目录可复制到任意路径
+#   （含空格、中文）运行，不会回落到拷贝来源的旧副本。
+# - node 用 DSH_NODE 显式指定，否则取 PATH 上的 node；都没有时给出可操作错误。
+# - 只支持 POSIX sh（macOS / Linux / WSL）。Windows 请直接用
+#   `node dsh-task.mjs ...`（两个入口等价，参数完全相同）。
+#
+# English:
+# Thin shorthand for dsh-task.mjs that keeps the old name and forwards arguments unchanged.
+# It resolves the sibling script from ITS OWN path, so the whole directory can be copied
+# anywhere (including paths with spaces or CJK characters) and still runs the local copy.
+# node comes from DSH_NODE when set, otherwise from PATH; if neither works it fails with an
+# actionable message instead of a confusing "command not found". POSIX sh only (macOS / Linux /
+# WSL); on Windows call `node dsh-task.mjs ...` directly. This wrapper adds no flags, no
+# defaults and no behavior of its own.
+set -eu
+
+case "$0" in
+  */*) self_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P) ;;
+  *) self_dir=$(pwd -P) ;;
+esac
+
+if [ ! -f "$self_dir/dsh-task.mjs" ]; then
+  echo "dsh-run: 找不到 $self_dir/dsh-task.mjs（请不要单独移动 dsh-run）" >&2
+  exit 127
+fi
+
+if [ -n "${DSH_NODE:-}" ]; then
+  node_bin=$DSH_NODE
+elif command -v node >/dev/null 2>&1; then
+  node_bin=$(command -v node)
+else
+  echo "dsh-run: 找不到 node。请安装 Node.js 22+，或设置 DSH_NODE 指向 node 可执行文件。" >&2
+  exit 127
+fi
+
+exec "$node_bin" "$self_dir/dsh-task.mjs" "$@"

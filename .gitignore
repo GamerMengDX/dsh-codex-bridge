@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+.dsh/
+.dsh-host/
+.dsh-codex-bridge-install.json
+.credentials.yaml
+.env
+.env.*
+!.env.example
+*.bak-*
+*.tmp-*
+
+# Local review evidence may contain machine paths or hashes of private configuration.
+docs/architecture/portability-evidence/

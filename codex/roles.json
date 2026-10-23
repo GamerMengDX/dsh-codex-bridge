@@ -1,0 +1,16 @@
+{
+  "$comment": "角色 → 模型映射。升级模型只改这里，然后重新运行 node install-codex.mjs。角色名保持不变。",
+  "version": 1,
+  "roles": {
+    "architecture_designer": {
+      "model": "gpt-6-astra",
+      "reasoning_effort": "high",
+      "nickname_candidates": ["Designer", "Architect", "System Designer"]
+    }
+  },
+  "inherited": {
+    "project_coordinator": "不在此文件配置：使用用户当前默认模型（~/.codex/config.toml 的 model）",
+    "development_executor": "不在 Codex 侧配置：由本地 DSH 承担，模型由 DSH 自身设置决定",
+    "quality_reviewer": "不单独配置模型：默认由主控在同一会话内完成验收"
+  }
+}

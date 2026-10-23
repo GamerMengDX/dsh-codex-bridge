@@ -1,0 +1,41 @@
+# --- DSH MCP bridge 注册段（模板；apply-config.mjs 生成的就是这个结构）---
+# Codex 通过标准 MCP 调用本地 DSH，不需要截屏 / computer use。
+#
+# 这是**模板**：把你本机路径填进 {{...}} 占位符，或者直接运行
+#
+#   node apply-config.mjs            # 自动写入 ~/.codex/config.toml（自动备份、就地更新）
+#   node apply-config.mjs --check    # 只读检查；未注册 / 过期 / 无效时退出码非零
+#   node apply-config.mjs --uninstall
+#
+# 占位符来源：
+#   {{NODE}}        本机 node（DSH_NODE > 当前进程 > PATH 上的 node）
+#   {{SERVER}}      <桥接目录>/server.mjs
+#   {{BRIDGE_ROOT}} 桥接目录（可整体复制到任意路径，含空格与中文）
+#   {{DSH_BIN}}     @deepseek-ai/dsh 包的 lib/bin.js（DSH_BIN / DSH_CLI_ROOT / PATH 发现）
+#   {{BRIDGE_STATE}} 桥接状态目录（默认 <用户目录>/.dsh-codex-bridge）
+#   {{DEFAULT_CWD}} 未显式给 cwd 时的工作目录（默认用户目录）
+#
+# 路径里含引号、反斜杠、空格时按 TOML 基本字符串转义：`\` → `\\`，`"` → `\"`。
+# apply-config.mjs 会自动转义；手写时照此处理。
+
+[mcp_servers.dsh]
+command = "{{NODE}}"
+args = ["{{SERVER}}"]
+cwd = "{{BRIDGE_ROOT}}"
+startup_timeout_sec = 30
+
+# 非秘密的 DSH 路径覆盖：GUI 启动的 Codex 不继承 shell 环境，必须显式写在这里。
+# 绝不在此写 API key——凭据由 DEEPSEEK_API_KEY 或 credentials 文件提供。
+[mcp_servers.dsh.env]
+DSH_BIN = "{{DSH_BIN}}"
+DSH_BRIDGE_HOME = "{{BRIDGE_STATE}}/dsh-home"
+DSH_DEFAULT_CWD = "{{DEFAULT_CWD}}"
+DSH_HOST_ROOT = "{{BRIDGE_STATE}}/host"
+
+# 可选：确实想禁止 Codex 用 computer use 时再取消注释。
+# 默认不动，避免影响你用它操作别的应用。
+# [plugins."computer-use@openai-bundled"]
+# enabled = false
+#
+# [plugins."unified-computer-use@openai-bundled"]
+# enabled = false
